@@ -1,21 +1,22 @@
-from sentence_transformers import CrossEncoder
+from backend.config import USE_RERANKER
 
-# Lazy load to avoid startup crash
 _model = None
-
-def get_model():
-    global _model
-    if _model is None:
-        _model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
-    return _model
-
 
 def rerank_chunks(query: str, chunks: list[dict], top_n: int = 5):
     if not chunks:
         return []
 
+    if not USE_RERANKER:
+        # Lite mode: skip reranking
+        return chunks[:top_n]
+
+    global _model
+    if _model is None:
+        from sentence_transformers import CrossEncoder
+        _model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+
     pairs = [(query, c["text"]) for c in chunks]
-    scores = get_model().predict(pairs)
+    scores = _model.predict(pairs)
 
     for c, score in zip(chunks, scores):
         c["score"] = float(score)
