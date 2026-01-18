@@ -115,9 +115,11 @@ DEPLOYMENT_MODE=full
 - Preserves full RAG workflow logic
 
 ```env
-DEPLOYMENT_MODE=full
+DEPLOYMENT_MODE=lite
 ```
 - Lite mode exists intentionally to handle real-world cloud constraints.
+
+---
 
 ## 🌐 API Endpoints
 
@@ -128,6 +130,8 @@ DEPLOYMENT_MODE=full
 | POST   | `/query`  | Ask a question  |
 | GET    | `/ui/`    | Web interface   |
 
+---
+
 ## 🧪 Example Queries
 
 - How are interns evaluated?
@@ -135,6 +139,7 @@ DEPLOYMENT_MODE=full
 - Is performance mentioned in the policy?
 - What happens if the answer is not present?
 
+---
 
 ## 🧯 Safety & Reliability
 
@@ -142,6 +147,8 @@ DEPLOYMENT_MODE=full
 - Ensures vector dimension consistency
 - Handles empty or weak retrieval gracefully
 - Avoids API quota failures in production
+- 
+---
 
 ## 🚀 Running Locally
 
@@ -162,12 +169,16 @@ Open in browser:
 http://127.0.0.1:8000/ui/
 ```
 
+---
+
 ## 📌 Design Decisions
 
 - Explicit separation of Full vs Lite execution
 - Fixed embedding dimension to prevent schema mismatch
 - Explainability prioritized over speculative generation
 - Built for clarity and robustness, not shortcuts
+
+---
 
 ## ⚠️ Known Limitations
 
@@ -176,6 +187,8 @@ http://127.0.0.1:8000/ui/
 - Single collection assumed per deployment
 
 These trade-offs are intentional and documented
+
+---
 
 ## 👤 Author
 
