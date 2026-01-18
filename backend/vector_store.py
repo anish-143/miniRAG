@@ -8,7 +8,7 @@ COLLECTION = os.getenv("QDRANT_COLLECTION")
 
 def upsert_chunks(chunks: list[dict]):
     client = get_client()
-    ensure_collection(client)
+    ensure_collection()
 
     texts = [c["text"] for c in chunks]
     vectors = embed_texts(texts)
