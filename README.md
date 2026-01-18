@@ -79,6 +79,13 @@ Citations + Confidence
 
 ---
 
+### Chunking Strategy
+- Chunk size: ~800 tokens
+- Overlap: ~100 tokens (~12%)
+- Strategy: sliding window
+
+---
+
 ## 🔍 Retrieval & Answer Generation
 
 1. User query is embedded
