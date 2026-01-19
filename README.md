@@ -1,208 +1,240 @@
-# 📚 Mini RAG System – Policy Question Answering
+# 🤖 miniRAG - Enterprise RAG AI Assistant
 
-A lightweight, production-style **Retrieval-Augmented Generation (RAG)** system for answering questions over policy documents with transparent retrieval, citations, and confidence estimation.
+An advanced **Retrieval-Augmented Generation (RAG)** system with enterprise-grade UI, file upload capabilities, calculated confidence scoring, and comprehensive performance metrics.
 
-This project demonstrates a **real-world RAG pipeline** while remaining deployable on **free-tier cloud platforms**.
-
----
-
-## 🔗 Live Demo
-
-🌐 **Live Application**  
-👉 https://mini-rag-policy-qa.onrender.com/ui/
-
-> ⚠️ The live deployment runs in **Lite Mode** to remain memory-safe on free-tier hosting.
+Built for NIT Delhi as part of CSE coursework.
 
 ---
 
-## 🧠 Project Overview
+## ✨ Key Features
 
-This system allows users to:
-- Ingest policy documents
-- Ask natural language questions
-- Retrieve relevant document chunks
-- View supporting evidence with citations
-- See confidence estimation for each answer
-
-The design focuses on **correctness, transparency, and deployment realism** rather than black-box generation.
-
----
-
-## 🏗️ System Architecture
-User Query
-->
-Embedding
-->
-Qdrant Vector Search
-->
-Reranking (Full Mode)
-->
-Context Selection
-->
-Answer Generation
-->
-Citations + Confidence
-
+- 📁 **File Upload Support**: PDF and TXT document processing with automatic text extraction
+- 🎯 **Calculated Confidence**: Percentage-based confidence scoring (0-99%) with color-coded indicators
+- 📊 **Comprehensive Metrics**: Detailed performance tracking including:
+  - Retrieval time
+  - Reranking time
+  - LLM processing time
+  - Total response time
+  - Token usage
+  - Estimated cost
+- 🎨 **Enterprise UI**: Professional dark/light theme with animated gradient backgrounds
+- 🔍 **Smart Search**: Vector-based semantic search with Qdrant cloud integration
+- 🤖 **AI-Powered**: Groq LLM for intelligent question answering
+- 📝 **Optional Metadata**: Flexible source field with auto-fill functionality
 
 ---
 
-## ⚙️ Core Components
+## 🏗️ Project Structure
 
-### Backend
-- **Framework**: FastAPI
-- **Vector Database**: Qdrant
-- **Chunking**: Overlapping text chunks
-- **Retrieval**: Cosine similarity search
-- **Reranking**: Cross-Encoder (local mode)
-- **Answering**: Context-grounded generation
-
-### Frontend
-- Static HTML served via FastAPI
-- Features:
-  - Document ingestion
-  - Question answering
-  - Retrieved chunk viewer
-  - Highlighted supporting sentences
-  - Confidence indicator
-
----
-
-## 📄 Document Ingestion
-
-- Documents are split into overlapping chunks
-- Each chunk stores metadata:
-  - Document title
-  - Source
-  - Chunk position
-- Embeddings are generated and stored in Qdrant
-- Ingestion is available via the `/ingest` endpoint
-
----
-
-### Chunking Strategy
-- Chunk size: ~800 tokens
-- Overlap: ~100 tokens (~12%)
-- Strategy: sliding window
-
----
-
-## 🔍 Retrieval & Answer Generation
-
-1. User query is embedded
-2. Top-K chunks are retrieved from Qdrant
-3. Chunks are reranked (Full Mode only)
-4. Answer is generated **only from retrieved context**
-5. Inline citations are detected
-6. Confidence is computed:
-   - **High** → Answer grounded in retrieved chunks
-   - **Low** → Weak grounding
-   - **None** → No relevant information found
-
-This prevents hallucination and ensures explainability.
-
----
-
-## 🚦 Deployment Modes
-
-### ✅ Full Mode (Local / Development)
-
-- Uses `sentence-transformers`
-- Uses cross-encoder reranker
-- Best answer quality
-- Recommended for local testing
-
-```env
-DEPLOYMENT_MODE=full
 ```
-### Lite Mode (Production / Free Tier)
-
-- Uses deterministic mock embeddings
-- No heavy ML models loaded
-- Memory-safe for Render / Vercel
-- Preserves full RAG workflow logic
-
-```env
-DEPLOYMENT_MODE=lite
+Mini-Rag-Policy-QA/
+├── backend/
+│   ├── app.py                    # FastAPI main application
+│   ├── answer_generator.py       # LLM response generation
+│   ├── answer.py                 # Answer processing logic
+│   ├── chunking.py               # Document chunking utilities
+│   ├── config.py                 # Configuration management
+│   ├── context_builder.py        # Context preparation for LLM
+│   ├── embeddings.py             # Text embedding generation
+│   ├── ingest.py                 # Document ingestion pipeline
+│   ├── qdrant_conn.py            # Qdrant database connection
+│   ├── rerank.py                 # Result reranking logic
+│   ├── retrieve.py               # Vector search retrieval
+│   ├── schemas.py                # Pydantic data models
+│   ├── vector_store.py           # Vector storage operations
+│   └── static/
+│       └── index.html            # Enterprise-grade frontend UI
+├── eval/                         # Evaluation scripts
+├── .env                          # Environment variables (API keys)
+├── .env.example                  # Environment template
+├── requirements.txt              # Python dependencies
+├── runtime.txt                   # Python version specification
+└── README.md                     # Project documentation
 ```
-- Lite mode exists intentionally to handle real-world cloud constraints.
 
 ---
 
-## 🌐 API Endpoints
+## 🚀 Quick Start
 
-| Method | Endpoint  | Description     |
-| ------ | --------- | --------------- |
-| GET    | `/health` | Health check    |
-| POST   | `/ingest` | Ingest document |
-| POST   | `/query`  | Ask a question  |
-| GET    | `/ui/`    | Web interface   |
+### Prerequisites
+- Python 3.12.5+
+- Qdrant Cloud account (or local Qdrant instance)
+- Groq API key
 
----
-
-## 🧪 Example Queries
-
-- How are interns evaluated?
-- Which document defines the selection policy?
-- Is performance mentioned in the policy?
-- What happens if the answer is not present?
-
----
-
-## 🧯 Safety & Reliability
-
-- Prevents hallucinations by refusing unsupported answers
-- Ensures vector dimension consistency
-- Handles empty or weak retrieval gracefully
-- Avoids API quota failures in production
-- 
----
-
-## 🚀 Running Locally
-
-### 1️⃣ Start Qdrant
+### 1️⃣ Clone Repository
 ```bash
-docker run -p 6333:6333 qdrant/qdrant
+git clone https://github.com/anish-143/miniRAG.git
+cd miniRAG
 ```
-### 2️⃣ Install Dependencies
+
+### 2️⃣ Create Virtual Environment
+```bash
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+```
+
+### 3️⃣ Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
-### 3️⃣ Run Backend
-```bash
-uvicorn backend.app:app --reload
+
+### 4️⃣ Configure Environment
+Create a `.env` file with:
+```env
+LLM_API_KEY=your_groq_api_key_here
+QDRANT_URL=your_qdrant_cloud_url_here
+QDRANT_API_KEY=your_qdrant_api_key_here
 ```
 
-Open in browser:
-
+### 5️⃣ Run the Application
 ```bash
-http://127.0.0.1:8000/ui/
+uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 6️⃣ Access the UI
+Open your browser at: **http://localhost:8000/ui/**
+
+---
+
+## 📡 API Endpoints
+
+| Method | Endpoint   | Description                          |
+|--------|-----------|--------------------------------------|
+| GET    | `/health` | Health check                         |
+| POST   | `/ingest` | Ingest document (text + metadata)    |
+| POST   | `/upload` | Upload PDF/TXT file                  |
+| POST   | `/query`  | Ask questions about documents        |
+| GET    | `/ui/`    | Access web interface                 |
+
+---
+
+## 🎯 How It Works
+
+### Document Ingestion Flow
+1. **Upload**: User uploads PDF/TXT file or inputs text manually
+2. **Chunking**: Document split into overlapping chunks (~800 tokens, 100 token overlap)
+3. **Embedding**: Chunks converted to vector embeddings
+4. **Storage**: Vectors stored in Qdrant cloud database with metadata
+
+### Query Processing Flow
+1. **Query Embedding**: User question converted to vector
+2. **Retrieval**: Top-K similar chunks retrieved from Qdrant
+3. **Reranking**: Results reranked by relevance
+4. **Context Building**: Selected chunks assembled as context
+5. **LLM Generation**: Groq generates answer from context
+6. **Metrics Calculation**: Performance metrics computed
+7. **Confidence Scoring**: Percentage-based confidence calculated
+8. **Response**: Answer with metrics, confidence, and sources returned
+
+---
+
+## 📊 Performance Metrics
+
+The system tracks and displays:
+- **Retrieval Time**: Vector search duration (ms)
+- **Reranking Time**: Result reranking duration (ms)
+- **LLM Time**: AI processing duration (ms)
+- **Total Time**: End-to-end response time (ms)
+- **Tokens Used**: Estimated token count
+- **Estimated Cost**: Calculated based on Groq pricing ($0.05/1M tokens)
+
+---
+
+## 🎨 UI Features
+
+- **Dark/Light Theme**: Toggle between themes
+- **Animated Background**: Gradient with floating orbs
+- **File Upload**: Drag-and-drop or click to upload
+- **Optional Source**: Auto-fills with document title
+- **Confidence Indicators**: Color-coded percentage scores
+  - 🟢 High (85-99%): Green
+  - 🟡 Medium (40-84%): Yellow
+  - 🔴 Low (0-39%): Red
+- **Metrics Dashboard**: Real-time performance statistics
+- **Responsive Design**: Works on desktop and mobile
+
+---
+
+## 🔧 Technology Stack
+
+### Backend
+- **FastAPI**: Modern Python web framework
+- **Qdrant**: Vector database for semantic search
+- **Groq**: High-performance LLM API
+- **pypdf**: PDF text extraction
+- **sentence-transformers**: Text embeddings
+
+### Frontend
+- **HTML5/CSS3/JavaScript**: Pure vanilla stack
+- **Font Awesome**: Icon library
+- **Google Fonts**: Space Grotesk, Inter, JetBrains Mono
+
+---
+
+## ⚙️ Configuration
+
+### Deployment Modes
+- **Full Mode**: Uses sentence-transformers and cross-encoder reranking
+- **Lite Mode**: Mock embeddings for memory-constrained environments
+
+Set in `.env`:
+```env
+DEPLOYMENT_MODE=full  # or 'lite'
 ```
 
 ---
 
-## 📌 Design Decisions
+## 🧪 Example Usage
 
-- Explicit separation of Full vs Lite execution
-- Fixed embedding dimension to prevent schema mismatch
-- Explainability prioritized over speculative generation
-- Built for clarity and robustness, not shortcuts
+### Ingest a Document
+1. Click "Upload Document"
+2. Select PDF/TXT file or paste text
+3. Enter title (required)
+4. Enter source (optional - auto-fills with title)
+5. Click "Ingest"
+
+### Ask Questions
+1. Type your question in the query box
+2. Click "Ask"
+3. View:
+   - AI-generated answer
+   - Confidence score
+   - Performance metrics
+   - Retrieved sources
 
 ---
 
-## ⚠️ Known Limitations
+## 📝 Example Queries
 
-- Lite mode uses mock embeddings (deployment trade-off)
-- No authentication layer (out of scope)
-- Single collection assumed per deployment
-
-These trade-offs are intentional and documented
+- "What is blockchain technology?"
+- "Explain the consensus mechanism"
+- "How does distributed ledger work?"
+- "What are smart contracts?"
 
 ---
 
 ## 👤 Author
 
-**Ashish Ranjan**  
-- GitHub: https://github.com/imaashu0486  
-- Resume: https://drive.google.com/file/d/1saJAWGx4y5ueEf-mXXW_Z-6jkaIHAnpP/view?usp=sharing  
+**Name:** Anish Kumar  
+**Roll No:** 231210016  
+**Branch:** Computer Science & Engineering (CSE)  
+**College:** National Institute of Technology (NIT) Delhi  
+**Email:** 231210016@nitdelhi.ac.in  
+**GitHub:** https://github.com/anish-143  
+**Resume:** https://drive.google.com/file/d/1-z8Fygk5TdMhaqnXgXh6coy4UCvva60y/view?usp=drive_link
+
+## 📄 License
+
+This project is created for academic purposes at NIT Delhi.
+
+---
+
+## 🙏 Acknowledgments
+
+- NIT Delhi CSE Department
+- Qdrant for vector database technology
+- Groq for LLM API access
+- FastAPI for the excellent framework  
 
 

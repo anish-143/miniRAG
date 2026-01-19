@@ -8,6 +8,8 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import uuid
 import time
+import os
+from pathlib import Path
 
 from backend.chunking import chunk_text
 from backend.vector_store import upsert_chunks
@@ -167,4 +169,15 @@ def root():
 
 # ---------- FRONTEND ----------
 
-app.mount("/ui", StaticFiles(directory="backend/static", html=True), name="static")
+# Determine static directory path relative to this file
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+if STATIC_DIR.exists():
+    app.mount("/ui", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
+
+if __name__ == "__main__":
+    import uvicorn
+    print(f"Starting server... Static directory: {STATIC_DIR}")
+    print(f"Static directory exists: {STATIC_DIR.exists()}")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
