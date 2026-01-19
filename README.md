@@ -17,6 +17,9 @@ An advanced **Retrieval-Augmented Generation (RAG)** system with enterprise-grad
   <img src="https://img.shields.io/badge/Hosted%20On-Render-black?style=flat-square" />
 </p>
 
+<p align="center">
+  <img src="https://media.giphy.com/media/26AHONQ79FdWZhAI0/giphy.gif" width="500"/>
+</p>
 
 ---
 
