@@ -7,21 +7,33 @@ EMBEDDING_DIM = 384
 
 # ---------- FULL MODE (LOCAL / REAL) ----------
 if USE_LOCAL_EMBEDDINGS:
-    from sentence_transformers import SentenceTransformer
+    try:
+        from sentence_transformers import SentenceTransformer
+        TRANSFORMERS_AVAILABLE = True
+    except ImportError:
+        print("WARNING: sentence-transformers not available, using lite mode")
+        TRANSFORMERS_AVAILABLE = False
 
     _model = None
 
     def get_model():
         global _model
+        if not TRANSFORMERS_AVAILABLE:
+            return None
         if _model is None:
             _model = SentenceTransformer("all-MiniLM-L6-v2")
         return _model
 
     def embed_texts(texts: list[str]) -> list[list[float]]:
-        return get_model().encode(
-            texts,
-            normalize_embeddings=True
-        ).tolist()
+        model = get_model()
+        if model:
+            return model.encode(
+                texts,
+                normalize_embeddings=True
+            ).tolist()
+        else:
+            # Fallback to lite mode
+            return embed_texts_lite(texts)
 
 # ---------- LITE MODE (API-BASED FOR RENDER) ----------
 else:
@@ -69,7 +81,7 @@ else:
                     break
         return vec
 
-    def embed_texts(texts: list[str]) -> list[list[float]]:
+    def embed_texts_lite(texts: list[str]) -> list[list[float]]:
         """Try HF API first, fallback to deterministic if unavailable"""
         embeddings = embed_with_hf_api(texts)
         
@@ -79,3 +91,6 @@ else:
             # Fallback to deterministic embeddings
             print("Using fallback embeddings (no HF token)")
             return [fake_embedding(t) for t in texts]
+    
+    def embed_texts(texts: list[str]) -> list[list[float]]:
+        return embed_texts_lite(texts)
