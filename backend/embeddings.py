@@ -1,5 +1,6 @@
 import hashlib
 import os
+import requests
 from backend.config import USE_LOCAL_EMBEDDINGS
 
 EMBEDDING_DIM = 384
@@ -24,22 +25,41 @@ if USE_LOCAL_EMBEDDINGS:
 
 # ---------- LITE MODE (API-BASED FOR RENDER) ----------
 else:
-    from openai import OpenAI
-    
-    _openai_client = None
-    
-    def get_openai_client():
-        global _openai_client
-        if _openai_client is None:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                # Fallback to mock embeddings if no API key
+    def embed_with_hf_api(texts: list[str]) -> list[list[float]]:
+        """Use Hugging Face Inference API for free embeddings"""
+        hf_token = os.getenv("HUGGINGFACE_TOKEN")
+        
+        if not hf_token:
+            # No token, use fallback
+            return None
+            
+        api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2"
+        headers = {"Authorization": f"Bearer {hf_token}"}
+        
+        try:
+            response = requests.post(
+                api_url,
+                headers=headers,
+                json={"inputs": texts, "options": {"wait_for_model": True}}
+            )
+            
+            if response.status_code == 200:
+                embeddings = response.json()
+                # Normalize embeddings
+                import numpy as np
+                embeddings = np.array(embeddings)
+                norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+                embeddings = embeddings / norms
+                return embeddings.tolist()
+            else:
+                print(f"HF API error: {response.status_code}")
                 return None
-            _openai_client = OpenAI(api_key=api_key)
-        return _openai_client
+        except Exception as e:
+            print(f"HF API exception: {e}")
+            return None
     
     def fake_embedding(text: str, dim: int = EMBEDDING_DIM):
-        """Fallback mock embedding if OpenAI not available"""
+        """Fallback deterministic embedding"""
         h = hashlib.sha256(text.encode()).digest()
         vec = []
         while len(vec) < dim:
@@ -50,19 +70,12 @@ else:
         return vec
 
     def embed_texts(texts: list[str]) -> list[list[float]]:
-        """Use OpenAI embeddings API in lite mode for better quality"""
-        client = get_openai_client()
+        """Try HF API first, fallback to deterministic if unavailable"""
+        embeddings = embed_with_hf_api(texts)
         
-        if client:
-            try:
-                response = client.embeddings.create(
-                    model="text-embedding-3-small",
-                    input=texts
-                )
-                return [item.embedding for item in response.data]
-            except Exception as e:
-                print(f"OpenAI API error: {e}, falling back to mock embeddings")
-                return [fake_embedding(t) for t in texts]
+        if embeddings:
+            return embeddings
         else:
-            # Use mock embeddings if no OpenAI key
+            # Fallback to deterministic embeddings
+            print("Using fallback embeddings (no HF token)")
             return [fake_embedding(t) for t in texts]
