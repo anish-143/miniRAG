@@ -2,7 +2,21 @@
 
 An advanced **Retrieval-Augmented Generation (RAG)** system with enterprise-grade UI, file upload capabilities, calculated confidence scoring, and comprehensive performance metrics.
 
-DEMO Url: - https://minirag-1c3t.onrender.com
+## 🚀 Live Demo
+
+<p align="center">
+  <a href="https://minirag-1c3t.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/▶%20Launch%20Demo-MiniRAG-success?style=for-the-badge&logo=googlechrome" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/RAG-Enabled-purple?style=flat-square" />
+  <img src="https://img.shields.io/badge/VectorDB-Qdrant-red?style=flat-square" />
+  <img src="https://img.shields.io/badge/Backend-FastAPI-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Hosted%20On-Render-black?style=flat-square" />
+</p>
+
 
 ---
 
