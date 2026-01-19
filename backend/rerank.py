@@ -12,8 +12,12 @@ def rerank_chunks(query: str, chunks: list[dict], top_n: int = 5):
 
     global _model
     if _model is None:
-        from sentence_transformers import CrossEncoder
-        _model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+        try:
+            from sentence_transformers import CrossEncoder
+            _model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+        except ImportError:
+            print("WARNING: sentence-transformers not available, skipping reranking")
+            return chunks[:top_n]
 
     pairs = [(query, c["text"]) for c in chunks]
     scores = _model.predict(pairs)
