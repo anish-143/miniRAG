@@ -175,6 +175,11 @@ STATIC_DIR = BASE_DIR / "static"
 
 if STATIC_DIR.exists():
     app.mount("/ui", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
+    
+@app.get("/ui_new")
+def ui_new():
+    from fastapi.responses import FileResponse
+    return FileResponse(str(STATIC_DIR / "index_new.html"))
 
 if __name__ == "__main__":
     import uvicorn

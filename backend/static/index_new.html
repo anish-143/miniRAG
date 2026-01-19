@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PolicyLens AI - Enterprise RAG System</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --dark: #0f172a;
+  --dark-light: #1e293b;
+  --gray: #64748b;
+  --light: #f1f5f9;
+  --white: #ffffff;
+  --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--dark);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.logo-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: var(--shadow);
+}
+
+.header h1 {
+  color: var(--white);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.header p {
+  color: rgba(255,255,255,0.9);
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.grid-full {
+  grid-column: 1 / -1;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--light);
+}
+
+.card-icon {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.card-header h2 {
+  color: var(--dark);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--dark);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--light);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: var(--white);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+textarea:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+/* Buttons */
+.btn-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.btn-secondary {
+  background: var(--light);
+  color: var(--dark);
+}
+
+.btn-secondary:hover {
+  background: var(--gray);
+  color: white;
+}
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+/* Status Messages */
+.status-message {
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-top: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.4s ease;
+}
+
+.status-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid var(--success);
+}
+
+.status-loading {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 2px solid #3b82f6;
+}
+
+/* Document Info */
+.doc-info {
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border-left: 4px solid var(--primary);
+}
+
+.doc-info h3 {
+  color: var(--primary);
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.doc-info p {
+  color: var(--dark);
+  line-height: 1.6;
+  margin: 5px 0;
+}
+
+.doc-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--gray);
+}
+
+/* Answer Section */
+.answer-container {
+  margin-top: 25px;
+}
+
+.answer-text {
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  padding: 25px;
+  border-radius: 12px;
+  border-left: 4px solid var(--success);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: var(--dark);
+  font-size: 1.05rem;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 10px 5px;
+}
+
+.badge-high {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-low {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Metrics */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, var(--light) 0%, #e2e8f0 100%);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.metric-label {
+  color: var(--gray);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Chunks */
+.chunks-container {
+  margin-top: 25px;
+}
+
+.chunk {
+  background: var(--white);
+  border: 2px solid var(--light);
+  border-left: 4px solid var(--primary);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.chunk:hover {
+  box-shadow: var(--shadow);
+  transform: translateX(5px);
+}
+
+.chunk.used {
+  border-left: 4px solid var(--success);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.chunk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.chunk-title {
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 1.1rem;
+}
+
+.chunk-source {
+  color: var(--gray);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.chunk-highlight {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-weight: 500;
+  border-left: 3px solid var(--warning);
+}
+
+.chunk-text {
+  color: var(--dark-light);
+  line-height: 1.6;
+}
+
+/* Loading Spinner */
+.spinner {
+  border: 3px solid var(--light);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🤖</div>
+      <div>
+        <h1>PolicyLens AI</h1>
+        <p>Enterprise RAG System - Powered by Groq & Qdrant</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="grid">
+    
+    <!-- Ingest Section -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📥</div>
+        <h2>Upload Document</h2>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Document Content</label>
+        <textarea id="docText" placeholder="Paste your policy document, guidelines, or any text content here..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Document Title</label>
+        <input type="text" id="docTitle" placeholder="e.g., Company Policy 2026" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Source / Reference</label>
+        <input type="text" id="docSource" placeholder="e.g., HR Department, Internal Wiki" />
+      </div>
+      
+      <div class="btn-group">
+        <button class="btn-primary" onclick="ingest()">
+          <span class="btn-icon">📤</span>
+          Upload Document
+        </button>
+      </div>
+      
+      <div id="ingestStatus"></div>
+    </div>
+
+    <!-- Document Status -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📄</div>
+        <h2>Indexed Documents</h2>
+      </div>
+      
+      <div id="docInfo" class="doc-info">
+        <div class="spinner"></div> Loading document info...
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Query Section -->
+  <div class="card grid-full">
+    <div class="card-header">
+      <div class="card-icon">💬</div>
+      <h2>Ask Questions</h2>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Your Question</label>
+      <input type="text" id="question" placeholder="Ask anything about your documents..." 
+             onkeypress="if(event.key==='Enter') ask()" />
+    </div>
+    
+    <div class="btn-group">
+      <button class="btn-primary" onclick="ask()">
+        <span class="btn-icon">🔍</span>
+        Get Answer
+      </button>
+      <button class="btn-secondary" onclick="toggleChunks()">
+        <span class="btn-icon">📊</span>
+        View Retrieved Context
+      </button>
+    </div>
+
+    <!-- Answer -->
+    <div id="answerContainer" class="answer-container hidden">
+      <div id="confidence"></div>
+      <div id="answer" class="answer-text"></div>
+      
+      <!-- Metrics -->
+      <div id="metricsContainer" class="metrics-grid"></div>
+      
+      <!-- Sources -->
+      <div id="sources"></div>
+    </div>
+
+    <!-- Retrieved Chunks -->
+    <div id="chunks" class="chunks-container hidden"></div>
+  </div>
+
+</div>
+
+<script>
+// Load document info on page load
+async function loadDocumentInfo() {
+  try {
+    const response = await fetch("/document");
+    const data = await response.json();
+
+    if (!data || !data.title) {
+      docInfo.innerHTML = `
+        <div class="doc-empty">
+          <p style="font-size: 3rem; margin-bottom: 10px;">📭</p>
+          <p style="font-size: 1.1rem; font-weight: 500;">No documents indexed yet</p>
+          <p style="margin-top: 8px;">Upload your first document to get started!</p>
+        </div>
+      `;
+      return;
+    }
+
+    docInfo.innerHTML = `
+      <h3>✅ ${data.title}</h3>
+      <p><strong>Source:</strong> ${data.source}</p>
+      <p><strong>Status:</strong> <span style="color: var(--success);">✓ Indexed & Ready</span></p>
+    `;
+  } catch (error) {
+    docInfo.innerHTML = `
+      <div class="doc-empty">
+        <p style="color: var(--danger);">⚠️ Error loading document info</p>
+      </div>
+    `;
+  }
+}
+
+// Ingest document
+async function ingest() {
+  const text = docText.value.trim();
+  const title = docTitle.value.trim();
+  const source = docSource.value.trim();
+
+  if (!text || !title) {
+    ingestStatus.innerHTML = `
+      <div class="status-message" style="background: #fee2e2; color: #991b1b; border: 2px solid var(--danger);">
+        <span>⚠️</span>
+        <span>Please provide both document content and title</span>
+      </div>
+    `;
+    return;
+  }
+
+  ingestStatus.innerHTML = `
+    <div class="status-message status-loading">
+      <div class="spinner"></div>
+      <span>Processing and indexing your document...</span>
+    </div>
+  `;
+
+  try {
+    await fetch("/ingest", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ text, title, source: source || "N/A" })
+    });
+
+    ingestStatus.innerHTML = `
+      <div class="status-message status-success">
+        <span>✅</span>
+        <span>Document successfully indexed! You can now ask questions.</span>
+      </div>
+    `;
+
+    // Clear form
+    docText.value = "";
+    docTitle.value = "";
+    docSource.value = "";
+
+    // Reload document info
+    loadDocumentInfo();
+  } catch (error) {
+    ingestStatus.innerHTML = `
+      <div class="status-message" style="background: #fee2e2; color: #991b1b; border: 2px solid var(--danger);">
+        <span>❌</span>
+        <span>Error indexing document. Please try again.</span>
+      </div>
+    `;
+  }
+}
+
+// Ask question
+async function ask() {
+  const questionText = question.value.trim();
+  
+  if (!questionText) {
+    return;
+  }
+
+  answerContainer.classList.remove("hidden");
+  answer.innerText = "🤔 Analyzing your question and searching through documents...";
+  confidence.innerHTML = "";
+  metricsContainer.innerHTML = "";
+  sources.innerHTML = "";
+  chunks.innerHTML = "";
+  chunks.classList.add("hidden");
+
+  try {
+    const response = await fetch("/query", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ question: questionText })
+    });
+
+    const data = await response.json();
+
+    // Answer
+    answer.innerText = data.answer;
+
+    // Confidence Badge
+    const confidenceClass = data.confidence.toLowerCase() === 'high' ? 'badge-high' : 
+                           data.confidence.toLowerCase() === 'medium' ? 'badge-medium' : 
+                           'badge-low';
+    
+    confidence.innerHTML = `
+      <div class="badge ${confidenceClass}">
+        ${data.confidence.toLowerCase() === 'high' ? '🟢' : 
+          data.confidence.toLowerCase() === 'medium' ? '🟡' : '🔴'}
+        Confidence: ${data.confidence}
+      </div>
+    `;
+
+    // Metrics
+    const m = data.metrics;
+    metricsContainer.innerHTML = `
+      <div class="metric-card">
+        <div class="metric-value">${m.total_ms}ms</div>
+        <div class="metric-label">Total Time</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">${m.retrieved_chunks}</div>
+        <div class="metric-label">Retrieved Chunks</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">${m.reranked_chunks}</div>
+        <div class="metric-label">Reranked</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">${m.cited_chunks}</div>
+        <div class="metric-label">Used in Answer</div>
+      </div>
+    `;
+
+    // Sources
+    if (data.sources?.length) {
+      sources.innerHTML = `
+        <div style="margin-top: 20px; padding: 15px; background: var(--light); border-radius: 12px;">
+          <strong style="color: var(--dark);">📚 Sources:</strong><br>
+          ${data.sources.map(s => `<span style="color: var(--gray);">• ${s.title} (${s.source})</span>`).join("<br>")}
+        </div>
+      `;
+    }
+
+    // Retrieved Chunks
+    if (data.retrieved_chunks?.length) {
+      chunks.innerHTML = `
+        <h3 style="color: var(--dark); margin-bottom: 20px;">
+          🔎 Retrieved Context (${data.retrieved_chunks.length} chunks)
+        </h3>
+        ${data.retrieved_chunks.map(c => `
+          <div class="chunk ${c.used_in_answer ? 'used' : ''}">
+            <div class="chunk-header">
+              <div>
+                <div class="chunk-title">
+                  ${c.used_in_answer ? '✅ ' : ''}${c.title}
+                </div>
+                <div class="chunk-source">${c.source}</div>
+              </div>
+            </div>
+            
+            ${c.highlight ? `<div class="chunk-highlight">💡 "${c.highlight}"</div>` : ''}
+            
+            <div class="chunk-text">${c.text}</div>
+          </div>
+        `).join('')}
+      `;
+    }
+  } catch (error) {
+    answer.innerText = "❌ Error processing your question. Please try again.";
+    confidence.innerHTML = "";
+    metricsContainer.innerHTML = "";
+  }
+}
+
+// Toggle chunks visibility
+function toggleChunks() {
+  chunks.classList.toggle("hidden");
+}
+
+// Initialize
+loadDocumentInfo();
+</script>
+
+</body>
+</html>
