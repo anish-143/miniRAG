@@ -9,12 +9,15 @@ QDRANT_URL=<your_qdrant_url>
 QDRANT_API_KEY=<your_qdrant_api_key>
 QDRANT_COLLECTION=policylens_chunks
 GROQ_API_KEY=<your_groq_api_key>
+OPENAI_API_KEY=<your_openai_api_key>
 DEPLOYMENT_MODE=lite
 ```
 
 ## Important Notes
 
 - Set `DEPLOYMENT_MODE=lite` for Render deployment to avoid memory issues
+- **OPENAI_API_KEY is required** for lite mode to use proper embeddings (text-embedding-3-small)
+- Without OpenAI key, the system will fall back to mock embeddings with poor search quality
 - Never commit actual API keys to the repository
 - Use Render's environment variables dashboard to set these values
 - The Procfile is already configured for deployment
