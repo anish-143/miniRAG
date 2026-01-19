@@ -2,7 +2,7 @@
 
 An advanced **Retrieval-Augmented Generation (RAG)** system with enterprise-grade UI, file upload capabilities, calculated confidence scoring, and comprehensive performance metrics.
 
-Built for NIT Delhi as part of CSE coursework.
+DEMO Url: - https://minirag-1c3t.onrender.com
 
 ---
 
@@ -187,7 +187,7 @@ DEPLOYMENT_MODE=full  # or 'lite'
 
 ## 🧪 Example Usage
 
-### Ingest a Document
+### Upload a Document
 1. Click "Upload Document"
 2. Select PDF/TXT file or paste text
 3. Enter title (required)
